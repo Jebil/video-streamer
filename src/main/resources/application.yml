@@ -1,0 +1,10 @@
+video:
+   location: D:\\Movies
+spring:
+   freemarker:
+      charset: UTF-8
+      check-template-location: true
+      enabled: true
+      prefer-file-system-access: true
+      suffix: .ftl
+      template-loader-path: classpath:/templates/
