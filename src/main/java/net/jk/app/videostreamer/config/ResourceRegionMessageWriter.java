@@ -1,4 +1,4 @@
-package net.jk.app.videostreamer;
+package net.jk.app.videostreamer.config;
 
 import java.io.IOException;
 import java.util.Collections;

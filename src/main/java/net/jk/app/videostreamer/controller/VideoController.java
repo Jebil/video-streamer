@@ -1,4 +1,4 @@
-package net.jk.app.videostreamer;
+package net.jk.app.videostreamer.controller;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

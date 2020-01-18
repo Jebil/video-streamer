@@ -1,4 +1,4 @@
-package net.jk.app.videostreamer;
+package net.jk.app.videostreamer.config;
 
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.stereotype.Component;
