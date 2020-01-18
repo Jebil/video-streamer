@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Local Streamer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<style>
+    .seperator {
+        margin-top: 1.5%;
+    }
+</style>
+
+<body>
+
+    <div>
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark sticky-top">
+            <a class="navbar-brand" href="#">Local Streamer</a>
+            <!-- <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">System 1</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">System 2</a>
+                </li>
+            </ul> -->
+        </nav>
+    </div>
+
+    <div class="container-fluid seperator">
+        <div class="container-fluid row">
+            <div></div>
+            <div class="col">
+                <h4>Videos<span class="badge badge-secondary"></span></h4>
+
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-success" type="submit">Go</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid seperator">
+            <div class="list-group">
+
+                <#list videos as video>
+                    <a href="/${video.location}" class="list-group-item list-group-item-action">${video.fileName}</a>
+                    <li>
+                        <a href="/${video.location}">${video.fileName}</a>
+                    </li>
+                </#list>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
