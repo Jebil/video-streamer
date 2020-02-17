@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import net.jk.app.videostreamer.model.Movie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import org.springframework.http.MediaTypeFactory;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class MovieService {
 
   @Value("${video.location}")
@@ -39,6 +41,7 @@ public class MovieService {
   }
 
   public List<Movie> getMoviesList() {
+    log.info("Video location {} ", videoLocation);
     try {
       return Files.walk(Paths.get(videoLocation))
           .filter(Files::isRegularFile)

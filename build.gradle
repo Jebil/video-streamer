@@ -88,3 +88,7 @@ spotbugs {
 
     spotbugsMain.jvmArgs("-Xmx1G", "-Xms1G")
     spotbugsMain.jvmArgs("-Xmx1G", "-Xms1G")
+    
+    bootRun {
+    systemProperties System.properties
+}
