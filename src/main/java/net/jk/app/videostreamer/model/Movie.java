@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class Movie {
-	private String title;
-	private String path;
+  private String title;
+  private String path;
 }

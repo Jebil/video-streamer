@@ -1,5 +1,7 @@
 package net.jk.app.videostreamer.service;
 
+import com.google.common.escape.Escaper;
+import com.google.common.net.UrlEscapers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,59 +12,61 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
-
+import net.jk.app.videostreamer.model.Movie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.stereotype.Service;
 
-import com.google.common.escape.Escaper;
-import com.google.common.net.UrlEscapers;
-
-import net.jk.app.videostreamer.model.Movie;
-
 @Service
 public class MovieService {
 
-	@Value("${video.location}")
-	private String videoLocation;
+  @Value("${video.location}")
+  private String videoLocation;
 
-	private static final Escaper ESCAPER = UrlEscapers.urlPathSegmentEscaper();
+  private static final Escaper ESCAPER = UrlEscapers.urlPathSegmentEscaper();
 
-	private static final List<MediaType> MEDIA_TYPES = new ArrayList<>();
+  private static final List<MediaType> MEDIA_TYPES = new ArrayList<>();
 
-	@PostConstruct
-	private void init() {
-		MEDIA_TYPES.add(MediaType.valueOf("video/x-matroska"));
-		MEDIA_TYPES.add(MediaType.valueOf("video/x-msvideo"));
-		MEDIA_TYPES.add(MediaType.valueOf("video/x-ms-wmv"));
-		MEDIA_TYPES.add(MediaType.valueOf("video/mp4"));
-		MEDIA_TYPES.add(MediaType.valueOf("video/x-ms-vob"));
-	}
+  @PostConstruct
+  private void init() {
+    MEDIA_TYPES.add(MediaType.valueOf("video/x-matroska"));
+    MEDIA_TYPES.add(MediaType.valueOf("video/x-msvideo"));
+    MEDIA_TYPES.add(MediaType.valueOf("video/x-ms-wmv"));
+    MEDIA_TYPES.add(MediaType.valueOf("video/mp4"));
+    MEDIA_TYPES.add(MediaType.valueOf("video/x-ms-vob"));
+  }
 
-	public List<Movie> getMoviesList() {
-		try {
-			return Files.walk(Paths.get(videoLocation)).filter(Files::isRegularFile).filter(isVideoFile)
-					.map(createMovie).collect(Collectors.toList());
-		} catch (IOException e) {
-			// TODO throw custom exception
-			return Collections.emptyList();
-		}
-	}
+  public List<Movie> getMoviesList() {
+    try {
+      return Files.walk(Paths.get(videoLocation))
+          .filter(Files::isRegularFile)
+          .filter(isVideoFile)
+          .map(createMovie)
+          .collect(Collectors.toList());
+    } catch (IOException e) {
+      // TODO throw custom exception
+      return Collections.emptyList();
+    }
+  }
 
-	public String escapeUrlPath(String videoName) {
-		return ESCAPER.escape(videoName);
-	}
+  public String escapeUrlPath(String videoName) {
+    return ESCAPER.escape(videoName);
+  }
 
-	private Predicate<Path> isVideoFile = (path) -> {
-		MediaType mediaType = MediaTypeFactory.getMediaType(path.getFileName().toString()).orElse(null);
-		return MEDIA_TYPES.contains(mediaType);
-	};
+  private Predicate<Path> isVideoFile =
+      (path) -> {
+        MediaType mediaType =
+            MediaTypeFactory.getMediaType(path.getFileName().toString()).orElse(null);
+        return MEDIA_TYPES.contains(mediaType);
+      };
 
-	private Function<Path, Movie> createMovie = (path) -> {
-		return Movie.builder().title(path.getFileName().toString())
-				.path(ESCAPER.escape(path.toAbsolutePath().toString())).build();
-	};
+  private Function<Path, Movie> createMovie =
+      (path) -> {
+        return Movie.builder()
+            .title(path.getFileName().toString())
+            .path(ESCAPER.escape(path.toAbsolutePath().toString()))
+            .build();
+      };
 }

@@ -6,8 +6,8 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 @Component
 public class WebFluxConfiguration implements WebFluxConfigurer {
-	@Override
-	public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
-		configurer.customCodecs().register(new ResourceRegionMessageWriter());
-	}
+  @Override
+  public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
+    configurer.customCodecs().register(new ResourceRegionMessageWriter());
+  }
 }
