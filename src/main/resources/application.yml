@@ -1,5 +1,5 @@
 video:
-   location: D:\\Movies
+   location: ${MOVIES_PATH:D:\\Movies}
 spring:
    freemarker:
       charset: UTF-8
