@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovieResponseDto {
-	private String title;
-	private String path;
+  private String title;
+  private String path;
 }

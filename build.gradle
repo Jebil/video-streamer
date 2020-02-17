@@ -1,7 +1,10 @@
+import com.github.sherter.googlejavaformatgradleplugin.GoogleJavaFormat
+
 plugins {
 	id 'org.springframework.boot' version '2.2.3.BUILD-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
+	id "com.github.sherter.google-java-format" version "0.8"
 }
 
 group = 'net.jk.app'
@@ -12,6 +15,12 @@ repositories {
 	mavenCentral()
 	maven { url 'https://repo.spring.io/milestone' }
 	maven { url 'https://repo.spring.io/snapshot' }
+}
+configurations {
+  developmentOnly
+  runtimeClasspath {
+    extendsFrom developmentOnly
+  }
 }
 
 dependencies {
@@ -32,4 +41,11 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+task format(type: GoogleJavaFormat) {
+        source 'src/main'
+        source 'src/test'
+        source 'src/integTest'
+        include '**/*.java'
 }
