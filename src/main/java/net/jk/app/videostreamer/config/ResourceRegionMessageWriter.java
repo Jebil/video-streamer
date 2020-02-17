@@ -49,7 +49,7 @@ public class ResourceRegionMessageWriter implements HttpMessageWriter<ResourceRe
       ReactiveHttpOutputMessage message,
       Map<String, Object> hints) {
     // TODO Auto-generated method stub
-    return null;
+    return Mono.empty();
   }
 
   public Mono<Void> write(
