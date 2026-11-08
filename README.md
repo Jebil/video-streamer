@@ -81,7 +81,7 @@ spring:
 | Variable | Description | Default |
 |---|---|---|
 | `MOVIES_PATH` | Path to directory containing video files | `./videos` |
-| `SERVER_PORT` | HTTP port for the web server | `8080` |
+| `SERVER_PORT` | HTTP port for the web server | `8085` |
 
 ### Supported Video Formats
 
@@ -132,7 +132,7 @@ Use the Gradle wrapper to build and run the project:
 ```bash
 ./gradlew bootRun
 ```
-Then navigate to [http://localhost:8080](http://localhost:8080) in your browser.
+Then navigate to [http://localhost:8085](http://localhost:8085) in your browser.
 
 ### 3. Auto-Format Code (Google Java Format)
 ```bash

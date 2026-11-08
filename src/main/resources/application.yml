@@ -1,5 +1,8 @@
+server:
+  port: ${SERVER_PORT:8085}
+
 video:
-  location: ${MOVIES_PATH:C:\Users\jebil\Downloads\torrentz}
+  location: ${MOVIES_PATH:./videos}
 
 spring:
   freemarker:
