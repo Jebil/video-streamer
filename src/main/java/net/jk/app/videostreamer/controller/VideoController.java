@@ -1,13 +1,19 @@
 package net.jk.app.videostreamer.controller;
 
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.jk.app.videostreamer.service.MovieService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,9 +36,10 @@ public class VideoController {
   private final MovieService movieService;
 
   private static final long CHUNK_SIZE = 1_000_000L; // 1 MB chunk
+  private static final int BUFFER_SIZE = 64 * 1024; // 64 KB
 
   @GetMapping("/videos/full/{*name}")
-  public ResponseEntity<Resource> getFullVideo(
+  public ResponseEntity<Flux<DataBuffer>> getFullVideo(
       @PathVariable String name, @RequestHeader(required = false) HttpHeaders headers) {
     try {
       String sanitized = name != null && name.startsWith("/") ? name.substring(1) : name;
@@ -41,21 +49,33 @@ public class VideoController {
       }
 
       Path filePath = resolved.get();
-      Resource video = new FileSystemResource(filePath);
+      long contentLength = Files.size(filePath);
       MediaType mediaType =
-          MediaTypeFactory.getMediaType(video).orElse(MediaType.APPLICATION_OCTET_STREAM);
+          MediaTypeFactory.getMediaType(filePath.getFileName().toString())
+              .orElse(MediaType.APPLICATION_OCTET_STREAM);
 
       ContentDisposition disposition =
           ContentDisposition.attachment().filename(filePath.getFileName().toString()).build();
 
+      // Stream via FileChannel with heap buffers to avoid Windows NIO issues
+      Flux<DataBuffer> body =
+          DataBufferUtils.readByteChannel(
+              () -> FileChannel.open(filePath, StandardOpenOption.READ),
+              DefaultDataBufferFactory.sharedInstance,
+              BUFFER_SIZE);
+
       return ResponseEntity.ok()
           .header(HttpHeaders.ACCEPT_RANGES, "bytes")
           .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
+          .contentLength(contentLength)
           .contentType(mediaType)
-          .body(video);
+          .body(body);
     } catch (SecurityException e) {
       log.warn("Access denied during full video request for '{}': {}", name, e.getMessage());
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    } catch (IOException e) {
+      log.error("Error accessing video file for '{}': {}", name, e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
 
