@@ -4,6 +4,19 @@ server:
 video:
   location: ${MOVIES_PATH:./videos}
 
+logging:
+  file:
+    name: ${LOG_FILE:logs/video-streamer.log}
+  level:
+    root: INFO
+    net.jk.app.videostreamer: INFO
+    org.springframework.web: INFO
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+      total-size-cap: 1GB
+
 spring:
   freemarker:
     charset: UTF-8

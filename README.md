@@ -82,6 +82,7 @@ spring:
 |---|---|---|
 | `MOVIES_PATH` | Path to directory containing video files | `./videos` |
 | `SERVER_PORT` | HTTP port for the web server | `8085` |
+| `LOG_FILE` | Filepath for rolling application logs | `logs/video-streamer.log` |
 
 ### Supported Video Formats
 
