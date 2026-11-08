@@ -1,11 +1,18 @@
 package net.jk.app.videostreamer.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movie {
   private String title;
   private String path;
+  private String extension;
+  private String formattedSize;
+  private long sizeBytes;
 }

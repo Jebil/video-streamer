@@ -12,4 +12,7 @@ import lombok.NoArgsConstructor;
 public class MovieResponseDto {
   private String title;
   private String path;
+  private String extension;
+  private String formattedSize;
+  private long sizeBytes;
 }

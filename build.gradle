@@ -1,94 +1,77 @@
-import com.github.sherter.googlejavaformatgradleplugin.GoogleJavaFormat
-
 plugins {
-	id 'org.springframework.boot' version '2.2.3.BUILD-SNAPSHOT'
-	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-	id 'java'
-	id "com.github.sherter.google-java-format" version "0.8"
-	id "com.github.spotbugs" version "3.0.0"
-	id "io.freefair.lombok" version "5.0.0-rc2"
+    id 'org.springframework.boot' version '4.1.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'com.diffplug.spotless' version '7.0.2'
+    id 'com.github.spotbugs' version '6.1.7'
 }
 
 group = 'net.jk.app'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.11'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
 
 repositories {
-	mavenCentral()
-	maven { url 'https://repo.spring.io/milestone' }
-	maven { url 'https://repo.spring.io/snapshot' }
+    mavenCentral()
 }
+
 configurations {
-  developmentOnly
-  runtimeClasspath {
-    extendsFrom developmentOnly
-  }
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'com.google.guava:guava:28.2-jre'
-	implementation 'org.apache.commons:commons-io:1.3.2'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-  	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-	
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
-	testImplementation 'io.projectreactor:reactor-test'
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'com.google.guava:guava:33.4.0-jre'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    compileOnly 'org.projectlombok:lombok:1.18.40'
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.40'
+    testCompileOnly 'org.projectlombok:lombok:1.18.40'
+    testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.40'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    reports {
+        junitXml.required = true
+        html.required = true
+    }
 }
 
-task format(type: GoogleJavaFormat) {
-        source 'src/main'
-        source 'src/test'
-        source 'src/integTest'
-        include '**/*.java'
+spotless {
+    java {
+        target 'src/*/java/**/*.java'
+        googleJavaFormat('2.0.0')
+    }
 }
-
-// verify Java code in accordance to Google Java Format
-// run "./gradlew googleJavaFormat" to auto-format all code
-compileJava.dependsOn verifyGoogleJavaFormat
-compileTestJava.dependsOn verifyGoogleJavaFormat
 
 spotbugs {
-        toolVersion = '4.0.0-beta1'
+    toolVersion = '4.9.8'
+    effort = 'max'
+    reportLevel = 'high'
+}
+
+tasks.named('spotbugsMain') {
+    reports {
+        xml.required = false
+        html.required = true
     }
+}
 
-    tasks.withType(com.github.spotbugs.SpotBugsTask) {
-        effort = "max"
-        showProgress = true
-        reportLevel = "high"
-        pluginClasspath = project.configurations.spotbugsPlugins
-
-        reports {
-            xml.enabled false
-            html.enabled true
-        }
-    }
-
-    test {
-        reports {
-            // make sure we generate JUnit XML reports for Jenkins
-            junitXml.enabled = true
-            html.enabled = true
-        }
-    }
-
-    task security {
-        description "Java security scan"
-        dependsOn("spotbugsMain","dependencyCheckAnalyze")
-    }
-
-    spotbugsMain.jvmArgs("-Xmx1G", "-Xms1G")
-    spotbugsMain.jvmArgs("-Xmx1G", "-Xms1G")
-    
-    bootRun {
+bootRun {
     systemProperties System.properties
 }
