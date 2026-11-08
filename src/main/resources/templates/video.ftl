@@ -167,6 +167,7 @@
                 <div class="video-title">${videoPath}</div>
             </div>
             <div class="actions">
+                <a href="/videos/m3u/${videoPath}" class="btn" title="Open directly in VLC Media Player">📺 Play in VLC</a>
                 <a href="/videos/full/${videoPath}" class="btn" download>📥 Download Full Video</a>
             </div>
         </div>

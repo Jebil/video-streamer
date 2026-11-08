@@ -1,6 +1,7 @@
 package net.jk.app.videostreamer.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -10,6 +11,9 @@ import net.jk.app.videostreamer.model.Movie;
 import net.jk.app.videostreamer.service.MovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 
@@ -57,5 +61,45 @@ class PageControllerTest {
 
     verify(movieService).refreshCache();
     assertEquals("redirect:/", viewName);
+  }
+
+  @Test
+  void shouldGenerateFullM3uPlaylist() {
+    List<Movie> movies =
+        List.of(
+            Movie.builder().title("Movie 1").path("action/m1.mp4").build(),
+            Movie.builder().title("Movie 2").path("comedy/m2.mkv").build());
+    when(movieService.getMoviesList()).thenReturn(movies);
+
+    MockServerHttpRequest request =
+        MockServerHttpRequest.get("/playlist.m3u")
+            .header(HttpHeaders.HOST, "192.168.0.17:8085")
+            .build();
+
+    String playlist = pageController.fullPlaylist(request);
+
+    assertTrue(playlist.startsWith("#EXTM3U\n"));
+    assertTrue(
+        playlist.contains("#EXTINF:-1,Movie 1\nhttp://192.168.0.17:8085/videos/action/m1.mp4\n"));
+    assertTrue(
+        playlist.contains("#EXTINF:-1,Movie 2\nhttp://192.168.0.17:8085/videos/comedy/m2.mkv\n"));
+  }
+
+  @Test
+  void shouldGenerateSingleMovieM3uPlaylist() {
+    MockServerHttpRequest request =
+        MockServerHttpRequest.get("/videos/m3u/action/m1.mp4")
+            .header(HttpHeaders.HOST, "192.168.0.17:8085")
+            .build();
+
+    ResponseEntity<String> response = pageController.moviePlaylist("action/m1.mp4", request);
+
+    assertEquals(200, response.getStatusCode().value());
+    assertTrue(response.getBody().contains("http://192.168.0.17:8085/videos/action/m1.mp4"));
+    assertTrue(
+        response
+            .getHeaders()
+            .getFirst(HttpHeaders.CONTENT_DISPOSITION)
+            .contains("action_m1.mp4.m3u"));
   }
 }

@@ -222,6 +222,7 @@
                 <span class="badge" id="videoCounter">${videos?size} videos</span>
             </div>
             <div class="header-actions">
+                <a href="/playlist.m3u" class="btn-refresh" title="Open entire library in VLC (M3U Playlist)">📺 VLC Playlist</a>
                 <a href="/refresh" class="btn-refresh" title="Rescan video folder">🔄 Refresh Library</a>
             </div>
         </header>

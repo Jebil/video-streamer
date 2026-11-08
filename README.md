@@ -98,10 +98,12 @@ spring:
 | Method | Endpoint | Description | Response Status |
 |---|---|---|---|
 | `GET` | `/` | Library overview page with instant search | `200 OK` (HTML) |
+| `GET` | `/playlist.m3u` | Dynamic M3U playlist of all movies for VLC / Kodi | `200 OK` (M3U) |
 | `GET` | `/watch/{*videoPath}` | Embedded player page for selected video | `200 OK` (HTML) |
 | `GET` | `/refresh` | Manually clears library cache and rescans disk | `302 Found` (Redirect) |
 | `GET` | `/videos/{*name}` | Streams chunked video with byte-range support | `206 Partial Content` / `404` / `403` |
 | `GET` | `/videos/full/{*name}` | Direct full file download | `200 OK` (Binary) / `404` / `403` |
+| `GET` | `/videos/m3u/{*name}` | Single-video M3U playlist file for VLC | `200 OK` (M3U) |
 
 ---
 
